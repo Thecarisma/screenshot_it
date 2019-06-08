@@ -1,0 +1,105 @@
+
+html {
+	background: red;
+}
+
+body {
+	margin: 0px;
+}
+
+a {
+	text-decoration: none;
+}
+
+.twitter-original {
+	background: white;
+	padding: 30px;
+	font-family: Arial, Helvetica, sans-serif;
+	width: 600px;
+	margin: 0px;
+}
+
+.tweet-header {
+	display: flex;
+    justify-content: space-between;
+	width: 100%;
+}
+
+.tweet-header .left {
+	display: flex;
+}
+
+.tweet-header .left .tweet-profile-img {
+	background: white;
+	border-radius: 100%;
+	width: 50px;
+	height: 50px;
+	margin-right: 10px;
+}
+
+.tweet-header .left .tweet-name .name {
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.tweet-header .left .tweet-name .handle-name {
+	top: 15px;
+	color: #393b3f;
+}
+
+.tweet-header .right {
+	margin-top: 10px;
+}
+
+.tweet-header .right .watermark {
+	background: #3c79f2;
+	height: 100%;
+	padding: 15px;
+	color: white;
+	font-weight: bold;
+	border-radius: 50px;
+}
+
+.tweet-header .right .arrow {
+	color: #a7a9aa;
+	margin-left: 10px;
+}
+
+.tweet-content {
+	font-weight: 800px;
+	font-size: 25px;
+	margin-top: 10px;
+}
+
+.quoted-tweet {
+	border-style: solid;
+	border-color: #b9bbbf;
+	border-width: 2px 2px 2px 2px;
+	border-radius: 5px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	padding: 20px;
+}
+
+.quoted-tweet .tweet-header .left .tweet-profile-img {
+	width: 35px;
+	height: 35px;
+}
+
+.quoted-tweet .tweet-header .left .tweet-name .name {
+	font-size: 17px;
+}
+
+.quoted-tweet .tweet-header .left .tweet-name .handle-name {
+	font-size: 12px;
+}
+
+.quoted-tweet .tweet-content {
+	font-size: 17px;
+}
+
+.date-time {
+	color: #393b3f;
+	margin-top: 10px;
+}
+

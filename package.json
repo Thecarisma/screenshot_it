@@ -1,0 +1,34 @@
+{
+  "name": "screenshot-it",
+  "version": "1.0.0",
+  "description": "capture a tweet as image",
+  "main": "screenshot-it.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thecarisma/screenshot-it/.git"
+  },
+  "keywords": [
+    "screen",
+    "shot",
+    "screenshot",
+    "twitter",
+    "tweet",
+    "bot",
+    "nodejs"
+  ],
+  "author": "Azeez Adewale",
+  "license": "LGPL-3.0",
+  "dependencies": {
+    "puppeteer-core": "^1.17.0",
+    "twit": "^2.2.11"
+  },
+  "devDependencies": {
+    "puppeteer": "^1.17.0"
+  },
+  "engines": {
+    "node": "10.x"
+  }
+}
