@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const twit = require('twit');
 const fs = require('fs')
-const path = require('path') 
+const path = require('path')
 
 const screenshotItCss = fs.readFileSync(path.resolve(__dirname, 'assets/css/screenshot-it.css'), 'utf8');
 //const fontAwesomeCss = fs.readFileSync(path.resolve(__dirname, 'assets/css/font-awesome.min.css'), 'utf8');
