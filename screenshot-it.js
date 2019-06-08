@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const twit = require('twit');
 const fs = require('fs')
-const path = require('path')
+const path = require('path') 
 
 const screenshotItCss = fs.readFileSync(path.resolve(__dirname, 'assets/css/screenshot-it.css'), 'utf8');
 //const fontAwesomeCss = fs.readFileSync(path.resolve(__dirname, 'assets/css/font-awesome.min.css'), 'utf8');
@@ -67,8 +67,8 @@ stream.on('tweet', function (tweet) {
 			}
 			
 			(async () => {
-				const browser = await puppeteer.launch({executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'});
-				//const browser = await puppeteer.launch();
+				//const browser = await puppeteer.launch({executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'});
+				const browser = await puppeteer.launch();
 				const page = await browser.newPage();
 				await page.setContent( `<html style="padding: 0px;">
 				<style> ` + screenshotItCss + ` </style> <!--<style> </style>-->

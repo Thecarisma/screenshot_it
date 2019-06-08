@@ -23,7 +23,7 @@
   "author": "Azeez Adewale",
   "license": "LGPL-3.0",
   "dependencies": {
-    "puppeteer-core": "^1.17.0",
+    "puppeteer": "^1.17.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {
