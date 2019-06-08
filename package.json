@@ -25,11 +25,5 @@
   "dependencies": {
     "puppeteer": "^1.17.0",
     "twit": "^2.2.11"
-  },
-  "devDependencies": {
-    "puppeteer": "^1.17.0"
-  },
-  "engines": {
-    "node": "10.x"
   }
 }
