@@ -68,7 +68,7 @@ stream.on('tweet', function (tweet) {
 			
 			(async () => {
 				//const browser = await puppeteer.launch({executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'});
-				const browser = await puppeteer.launch();
+				const browser = await puppeteer.launch({ headless: true, args:['--no-sandbox', '--disable-setuid-sandbox'] })
 				const page = await browser.newPage();
 				await page.setContent( `<html style="padding: 0px;">
 				<style> ` + screenshotItCss + ` </style> <!--<style> </style>-->
