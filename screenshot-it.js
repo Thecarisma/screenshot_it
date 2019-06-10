@@ -10,7 +10,8 @@ const config = {
   consumer_key: process.env.consumer_key,
   consumer_secret: process.env.consumer_secret,
   access_token: process.env.access_token,
-  access_token_secret: process.env.access_token_secret
+  access_token_secret: process.env.access_token_secret,
+  tweet_mode: 'extended'
 }
 const Twitter = new twit(config)
 let params = {
@@ -20,20 +21,21 @@ var stream = Twitter.stream('statuses/filter', params)
 stream.on('tweet', function (tweet) {
 	
 	let mentionedTweetId  ;
-	//console.log(tweet)
+	let requestHandle ;
 	//get the tweet information to extract parameters
 	Twitter.get('statuses/show/:id', { id: tweet.id_str }, function(err, data, response) {
 		if (!err) {
 			mentionedTweetId = data.id_str;
+			requestHandle = data.user.screen_name;
 		}
 	})
 	
 	//get the tweet to convert to image information
-	Twitter.get('statuses/show/:id', { id: tweet.in_reply_to_status_id_str }, function(err, data, response) {
+	Twitter.get('statuses/show/:id', { id: tweet.in_reply_to_status_id_str, tweet_mode: 'extended' }, function(err, data, response) {
 		//console.log(data)
 		if (!err) {
 			let date = data.created_at //7:13 PM - 3 Jul 2018
-			let tweetContent = data.text.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');;
+			let tweetContent = (data.full_text ? data.full_text : data.text).replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\n/g, "<br />");
 			let userName = data.user.name
 			let userHandle = data.user.screen_name
 			let userImage = data.user.profile_image_url_https
@@ -42,9 +44,54 @@ stream.on('tweet', function (tweet) {
 			let isStatusQuoted = data.is_quote_status
 			let tweetId = data.user.screen_name + data.id_str ;
 			let tweetRealId = data.id_str ;
+			let mediaHTML = '';
 			let quotedStatusHTML = '';
+			if (data.extended_entities) {
+				let count = data.extended_entities.media.length;
+				//console.log(data.extended_entities);
+				if (count == 1) {
+					mediaHTML += `<div class="media">
+									<img class="one-img" src="` + data.extended_entities.media[0].media_url_https + `" 
+										alt="` + data.extended_entities.media[0].id_str + `" />
+								</div>` ;
+				} else if ( count == 2) {
+					mediaHTML += `<div class="media two">
+									<img class="two-img" src="` + data.extended_entities.media[0].media_url_https + `" 
+											alt="` + data.extended_entities.media[0].id_str + `" />
+									<img class="two-img" src="` + data.extended_entities.media[1].media_url_https + `" 
+											alt="` + data.extended_entities.media[1].id_str + `" />
+								</div>` ;
+				} else if ( count == 3) {
+					mediaHTML += `<div class="media">
+									<img class="side-one" src="` + data.extended_entities.media[0].media_url_https + `" 
+											alt="` + data.extended_entities.media[0].id_str + `" />
+									<div class="side-two" >
+										<img src="` + data.extended_entities.media[1].media_url_https + `" 
+											alt="` + data.extended_entities.media[1].id_str + `" />
+											
+										<img src="` + data.extended_entities.media[2].media_url_https + `" 
+											alt="` + data.extended_entities.media[2].id_str + `" />
+									</div>
+								</div>` ;
+				} else if ( count == 4) {
+					mediaHTML += `<div class="media">
+									<img class="side-one" src="` + data.extended_entities.media[0].media_url_https + `" 
+											alt="` + data.extended_entities.media[0].id_str + `" />
+									<div class="side-two-3" >
+										<img src="` + data.extended_entities.media[1].media_url_https + `" 
+											alt="` + data.extended_entities.media[1].id_str + `" />
+											
+										<img src="` + data.extended_entities.media[2].media_url_https + `" 
+											alt="` + data.extended_entities.media[2].id_str + `" />
+											
+										<img src="` + data.extended_entities.media[3].media_url_https + `" 
+											alt="` + data.extended_entities.media[3].id_str + `" />
+									</div>
+								</div>` ;
+				}
+			}
 			if (isStatusQuoted == 1) {
-				let quotedStatusContent = data.quoted_status.text
+				let quotedStatusContent = (data.quoted_status.full_text ? data.quoted_status.full_text : data.quoted_status.text).replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\n/g, "<br />")
 				let quotedStatusUserName = data.quoted_status.user.name
 				let quotedStatusUserHandle = data.quoted_status.user.screen_name
 				let quotedStatusUserImage = data.quoted_status.user.profile_image_url_https
@@ -67,8 +114,8 @@ stream.on('tweet', function (tweet) {
 			}
 			
 			(async () => {
-				//const browser = await puppeteer.launch({executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'});
-				const browser = await puppeteer.launch({ headless: true, args:['--no-sandbox', '--disable-setuid-sandbox'] })
+				const browser = await puppeteer.launch({executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'});
+				//const browser = await puppeteer.launch({ headless: true, args:['--no-sandbox', '--disable-setuid-sandbox'] })
 				const page = await browser.newPage();
 				await page.setContent( `<html style="padding: 0px;">
 				<style> ` + screenshotItCss + ` </style> <!--<style> </style>-->
@@ -83,20 +130,21 @@ stream.on('tweet', function (tweet) {
 								</div>
 							</div>
 							<div class="right">
-								<a href=""><span class="watermark">@screenshot_it</span></a>
+								<a href=""><span class="watermark">@` + requestHandle + `</span></a>
 								<i class="fa fa-chevron-down arrow"></i>
 							</div>
 						</div>
 						<div class="tweet-content">
 						` + tweetContent + `
 						</div>
+						` + mediaHTML+ `
 						` + quotedStatusHTML + `
-						<div class="date-time">` + date + `</div>
+						<div class="date-time">` + date + ` - @screenshot_it</div>
 					</div>
 				</body>
 				</html>` );
 
-				await page.waitForSelector('.twitter-original');
+				await page.waitForSelector('.tweet-content');
 				async function screenshotDOMElement(selector, padding = 0) {
 					const rect = await page.evaluate(selector => {
 						const element = document.querySelector(selector);
@@ -105,7 +153,7 @@ stream.on('tweet', function (tweet) {
 						return {left: x, top: y, width, height, id: element.id};
 					}, selector);
 
-					//console.log('#' + tweetId);
+					//console.log('#' + tweetId + '-' + userHandle);
 					return await page.screenshot({
 						//path: tweetId + '.png',
 						clip: {
@@ -129,25 +177,18 @@ stream.on('tweet', function (tweet) {
 					Twitter.post('media/metadata/create', meta_params, function (err, data, response) {
 						if (!err) {
 							var params = { 
-								status: '@'+userHandle, 
+								status: 'Hi @'+requestHandle + ' the tweet has been converted to an image, you can save the image below', 
 								media_ids: [mediaIdStr], 
 								in_reply_to_status_id: mentionedTweetId
 							}		
 							Twitter.post('statuses/update', params, function (err, data, response) {
 								//console.log(data)
-							})	
-							var params1 = { 
-								status: 'Tweet converted to image by @'+userHandle , 
-								media_ids: [mediaIdStr]
-							}
-							Twitter.post('statuses/update', params1, function (err, data, response) {
-								//console.log(data)
 							})
+							console.log("Successfully save image from tweet: " + tweetRealId);
 						}
 					 })
 				})
 			})();
-			console.log("Successfully save image from tweet: " + tweetRealId);
 		}
 	})
 })
