@@ -2,9 +2,10 @@ const puppeteer = require('puppeteer');
 const twit = require('twit');
 const fs = require('fs')
 const path = require('path')
+const util = require("./util.js");
 
 const screenshotItCss = fs.readFileSync(path.resolve(__dirname, 'assets/css/screenshot-it.css'), 'utf8');
-//const fontAwesomeCss = fs.readFileSync(path.resolve(__dirname, 'assets/css/font-awesome.min.css'), 'utf8');
+const fontAwesomeJS = fs.readFileSync(path.resolve(__dirname, 'assets/js/font-awesome.js'), 'utf8');
 
 const config = {
   consumer_key: process.env.consumer_key,
@@ -22,11 +23,16 @@ stream.on('tweet', function (tweet) {
 	
 	let mentionedTweetId  ;
 	let requestHandle ;
+	let darkTheme = "" ;
+	let noStat = 0 ;
 	//get the tweet information to extract parameters
-	Twitter.get('statuses/show/:id', { id: tweet.id_str }, function(err, data, response) {
+	Twitter.get('statuses/show/:id', { id: tweet.id_str, tweet_mode: 'extended'  }, function(err, data, response) {
 		if (!err) {
 			mentionedTweetId = data.id_str;
 			requestHandle = data.user.screen_name;
+			let requestTweetContent = (data.full_text ? data.full_text : data.text).replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\n/g, "<br />");
+			if (requestTweetContent.indexOf('dark') > -1) { darkTheme = " theme-dark" ; }
+			if (requestTweetContent.indexOf('nostat') > -1) { noStat = 1 ; }
 		}
 	})
 	
@@ -34,7 +40,7 @@ stream.on('tweet', function (tweet) {
 	Twitter.get('statuses/show/:id', { id: tweet.in_reply_to_status_id_str, tweet_mode: 'extended' }, function(err, data, response) {
 		//console.log(data)
 		if (!err) {
-			let date = data.created_at //7:13 PM - 3 Jul 2018
+			let date = util.formatTwitterDate(data.created_at); //7:13 PM - 3 Jul 2018
 			let tweetContent = (data.full_text ? data.full_text : data.text).replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\n/g, "<br />");
 			let userName = data.user.name
 			let userHandle = data.user.screen_name
@@ -46,6 +52,19 @@ stream.on('tweet', function (tweet) {
 			let tweetRealId = data.id_str ;
 			let mediaHTML = '';
 			let quotedStatusHTML = '';
+			let tweetStat = '' ;
+			if (noStat == 0) {
+				tweetStat = `
+				<div class="stats">
+					<div class="stat">
+						<span class="count">`+retweetCount+`</span> Retweets
+					</div>
+					<div class="stat">
+						<span class="count">`+likeCount+`</span> Likes
+					</div>
+				</div>
+				`;
+			}
 			if (data.extended_entities) {
 				let count = data.extended_entities.media.length;
 				//console.log(data.extended_entities);
@@ -118,9 +137,9 @@ stream.on('tweet', function (tweet) {
 				const browser = await puppeteer.launch({ headless: true, args:['--no-sandbox', '--disable-setuid-sandbox'] })
 				const page = await browser.newPage();
 				await page.setContent( `<html style="padding: 0px;">
-				<style> ` + screenshotItCss + ` </style> <!--<style> </style>-->
+				<style> ` + screenshotItCss + ` </style> 
 				<body>
-					<div class="twitter-original" id="` + tweetId + ` " >
+					<div class="twitter-original`+darkTheme+`" id="` + tweetId + ` " >
 						<div class="tweet-header">
 							<div class="left">
 								<img class="tweet-profile-img" src="` + userImage + `" />
@@ -130,8 +149,7 @@ stream.on('tweet', function (tweet) {
 								</div>
 							</div>
 							<div class="right">
-								<a href=""><span class="watermark">@` + requestHandle + `</span></a>
-								<i class="fa fa-chevron-down arrow"></i>
+								<a href=""><span class="watermark">` + requestHandle + `</span></a>
 							</div>
 						</div>
 						<div class="tweet-content">
@@ -140,6 +158,7 @@ stream.on('tweet', function (tweet) {
 						` + mediaHTML+ `
 						` + quotedStatusHTML + `
 						<div class="date-time">` + date + ` - @screenshot_it</div>
+						`+ tweetStat +`
 					</div>
 				</body>
 				</html>` );
@@ -184,7 +203,7 @@ stream.on('tweet', function (tweet) {
 							Twitter.post('statuses/update', params, function (err, data, response) {
 								//console.log(data)
 							})
-							console.log("Successfully save image from tweet: " + tweetRealId);
+							console.log("Successfully generated image from tweet: " + tweetRealId);
 						}
 					 })
 				})

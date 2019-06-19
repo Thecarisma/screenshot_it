@@ -1,6 +1,6 @@
 
 html {
-	background: white;
+	background: gray;
 }
 
 body {
@@ -17,6 +17,27 @@ a {
 	font-family: Arial, Helvetica, sans-serif;
 	width: 600px;
 	margin: 0px;
+}
+
+.twitter-original .stats {
+	margin-top: 10px;
+	border-style: solid;
+	border-color: #b9bbbf;
+	border-width: 2px 0px 2px 0px;
+	display: flex;
+}
+
+.twitter-original .stats .stat {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-right: 20px;
+	color: #393b3f;
+	font-size: 20px;
+}
+
+.twitter-original .stats .stat .count {
+	color: black;
+	font-weight: bold;
 }
 
 .tweet-header {
@@ -157,3 +178,73 @@ a {
 	border-radius: 10px;
 }
 
+.theme-dark {
+	background: rgb(21, 32, 43);
+	color: white;
+}
+
+.theme-dark .quoted-tweet {
+	border-color: rgb(103, 119, 131);
+}
+
+.theme-dark .tweet-header .left .tweet-name .handle-name {
+	color: rgb(103, 119, 131);
+}
+
+.theme-dark .date-time {
+	color: rgb(103, 119, 131);
+}
+
+.theme-dark .stats {
+	border-color: rgb(103, 119, 131);
+}
+
+.theme-dark .stats .stat {
+	color: rgb(103, 119, 131);
+}
+
+.theme-dark .stats .stat .count {
+	color: white;
+}
+
+/** Thread **/
+
+.thread-tweet-compound {
+	margin-top: 2px;
+	border-style: solid;
+	border-color: rgb(164, 217, 249);
+	border-width: 0px 0px 0px 5px;
+	margin-left: 20px;
+	padding-left: 30px;
+	padding-bottom: 30px;
+}
+
+.thread-tweet-compound .stats {
+	margin-top: 0px;
+	border-width: 0px 0px 0px 0px;
+	display: flex;
+}
+
+.thread .date-time {
+	margin-top: 5px;
+	margin-left: 5px;
+	font-size: 12px;
+}
+
+.thread-tweet-compound .stats .stat {
+	margin-top: 13px;
+	margin-bottom: 0px;
+	color: #393b3f;
+	font-size: 12px;
+}
+
+.thread-tweet-compound .stats .stat .count {
+	color: black;
+	font-weight: bold;
+}
+
+/** EXTRAS **/
+
+.margin-top-2 {
+	margin-top: 2px;
+}
