@@ -23,7 +23,7 @@ stream.on('tweet', function (tweet) {
 	
 	let mentionedTweetId  ;
 	let requestHandle ;
-	let darkTheme = "" ;
+	let darkTheme = " theme-dark" ;
 	let noStat = 0 ;
 	//get the tweet information to extract parameters
 	Twitter.get('statuses/show/:id', { id: tweet.id_str, tweet_mode: 'extended'  }, function(err, data, response) {
@@ -31,7 +31,7 @@ stream.on('tweet', function (tweet) {
 			mentionedTweetId = data.id_str;
 			requestHandle = data.user.screen_name;
 			let requestTweetContent = (data.full_text ? data.full_text : data.text).replace(/(?:https?|ftp):\/\/[\n\S]+/g, '').replace(/\n/g, "<br />");
-			if (requestTweetContent.indexOf('dark') > -1) { darkTheme = " theme-dark" ; }
+			if (requestTweetContent.indexOf('light') > -1) { darkTheme = "" ; }
 			if (requestTweetContent.indexOf('nostat') > -1) { noStat = 1 ; }
 		}
 	})
